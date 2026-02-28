@@ -29,7 +29,7 @@ CSV投入 → 90件一括検算（30秒以内） → 例外7件を自動検出 �
 
 ```
 [CSV] → [React UI] → [FastAPI] → [PostgreSQL]
-                           ├→ [Claude API]（例外理由生成）
+                           ├→ [OpenAI API]（例外理由生成）
                            ├→ [Google Sheets]（4シート保存）
                            └→ [Slack Webhook]（例外通知）
               ↑ SSE ↑
@@ -284,8 +284,8 @@ diff_amount != 0 → 例外（赤）
 | diff_amount | INT | 差額 |
 | status | VARCHAR | OK / EXCEPTION |
 | reason_code | VARCHAR | 例外コード（NULL可） |
-| reason_text | TEXT | Claude生成理由文（例外のみ） |
-| suggested_action | TEXT | Claude生成推奨対応（例外のみ） |
+| reason_text | TEXT | AI生成理由文（例外のみ） |
+| suggested_action | TEXT | AI生成推奨対応（例外のみ） |
 | duplicate_skipped | BOOLEAN | 重複スキップフラグ |
 | created_at | TIMESTAMP | 作成日時 |
 
@@ -304,7 +304,7 @@ diff_amount != 0 → 例外（赤）
   3. CSVパース＆正規化
   4. 90件検算
   5. 冪等チェック: 重複はスキップして audit へ
-  6. 例外のみ Claude で reason_text / suggested_action 生成
+  6. 例外のみ OpenAI で reason_text / suggested_action 生成
   7. DB保存（invoices）
   8. Sheets batch update（4シート）
   9. Slack通知（例外のみ）
@@ -391,44 +391,21 @@ job_id, created_at, source_file_hash, invoice_no, branch, status, diff_amount, r
 
 ---
 
-## 12. Claude API 仕様
+## 12. OpenAI API 仕様
 
 ### 12.1 対象
 例外行のみ
 
-### 12.2 入力JSON
+### 12.2 入力データ
 
-```json
-{
-  "invoice_no": "INV-B-012",
-  "branch": "B営業所",
-  "customer_name": "サンプル商事",
-  "base_total": 100000,
-  "computed_total": 99990,
-  "diff": -10,
-  "reason_code": "TAX_MISMATCH",
-  "tax_rule": "header_floor_10pct",
-  "applied_discount": 5000,
-  "subtotal_ex_tax": 120000
-}
+```
+reason_code, 差額, 基幹合計, AI合計 をプロンプトに含める
 ```
 
-### 12.3 出力JSON
-
-```json
-{
-  "reason_text": "税抜小計120,000円から値引き5,000円を差し引いた115,000円に対し、消費税を切捨て計算すると11,500円になりますが、基幹システムでは11,510円として計算されています。端数処理の方式が異なっている可能性があります。",
-  "suggested_action": "基幹システムの端数処理設定（切捨て/四捨五入/切上げ）を確認し、請求書の税額を修正してください。"
-}
-```
-
-### 12.4 呼び出し設定
-- モデル: `claude-sonnet-4-20250514`
-- timeout: 12秒
-- retry: 1回
-- 失敗時fallback:
-  - reason_text: `"差額が発生しました（自動判定）。値引き・税・端数を確認してください。"`
-  - suggested_action: `"基幹値とAI再計算の内訳を比較し、値引き/税/合計のどこで差が出たか確認してください。"`
+### 12.3 呼び出し設定
+- モデル: `gpt-4o-mini`
+- temperature: 0.3
+- 失敗時fallback: `"差額が発生しました。値引き・税・合計を確認してください。"`
 
 ---
 
@@ -449,7 +426,7 @@ job_id, created_at, source_file_hash, invoice_no, branch, status, diff_amount, r
 |------|------|
 | 必須カラム欠落/不正値 | その行のみ例外化（REQUIRED_MISSING）して処理継続 |
 | 同一ファイル再投入 | duplicate_skipped で継続 |
-| Claude API失敗 | fallback文章で継続 |
+| OpenAI API失敗 | fallback文章で継続 |
 | Google Sheets失敗 | DB保存を優先し継続（warningログ） |
 | Slack失敗 | DB/Sheets/UIは継続（warningログ） |
 
@@ -474,7 +451,7 @@ job_id, created_at, source_file_hash, invoice_no, branch, status, diff_amount, r
 | バックエンド | Python + FastAPI |
 | ORM | Prisma (prisma-client-py) |
 | データベース | PostgreSQL (Neon) |
-| AI | Claude API (anthropic Python SDK) |
+| AI | OpenAI API (openai Python SDK) |
 | Sheets | gspread + サービスアカウント |
 | Slack | slack_sdk (Incoming Webhook) |
 | フロントデプロイ | Vercel |
@@ -486,7 +463,7 @@ job_id, created_at, source_file_hash, invoice_no, branch, status, diff_amount, r
 
 | サービス | 用途 | 料金 |
 |---------|------|------|
-| Anthropic Claude API | 例外理由文生成 | 7件あたり約¥6 |
+| OpenAI API | 例外理由文生成 | gpt-4o-mini使用 |
 | Google Sheets API | 4シート保存 | 無料 |
 | Slack Incoming Webhook | 例外通知 | 無料 |
 | Neon PostgreSQL | データ永続化 | 無料枠（0.5GB） |

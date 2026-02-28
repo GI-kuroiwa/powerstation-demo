@@ -30,7 +30,7 @@
 
 - frontend: frontend/.env.local（VITE_*プレフィックス必須）
   - 設定モジュール: src/config/index.ts（import.meta.env集約）
-- backend: backend/.env.local（DATABASE_URL, ANTHROPIC_API_KEY, GOOGLE_SHEETS_CREDENTIALS_JSON, SLACK_WEBHOOK_URL等）
+- backend: backend/.env.local（DATABASE_URL, OPENAI_API_KEY, GOOGLE_SHEETS_CREDENTIALS_JSON, SLACK_WEBHOOK_URL等）
   - 設定モジュール: src/config/index.ts（process.env集約）
 - ハードコード禁止: process.env / import.meta.env はconfig経由のみ
 - **絶対禁止**: .env, .env.test, .env.development, .env.example は作成しない
@@ -102,7 +102,7 @@
 ## 停止防止
 
 - 必須欠落 → 行例外化して継続
-- Claude失敗 → fallback文で継続
+- OpenAI失敗 → fallback文で継続
 - Sheets失敗 → DB優先して継続
 - Slack失敗 → 他は継続（warning）
 
