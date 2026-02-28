@@ -45,9 +45,12 @@ export const components: Components<Theme> = {
   MuiCard: {
     styleOverrides: {
       root: {
-        borderRadius: 12,
-        border: '1px solid #2d3748',
+        borderRadius: 16,
+        border: '1px solid rgba(255, 255, 255, 0.08)',
         backgroundImage: 'none',
+        backgroundColor: 'rgba(26, 32, 40, 0.7)',
+        backdropFilter: 'blur(16px)',
+        WebkitBackdropFilter: 'blur(16px)',
       },
     },
     defaultProps: {
