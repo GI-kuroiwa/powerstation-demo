@@ -2,8 +2,9 @@
 
 import asyncio
 import json
+import uuid as _uuid
 
-from fastapi import APIRouter
+from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
 
 from src import progress
@@ -13,6 +14,10 @@ router = APIRouter()
 
 @router.get("/api/stream/{job_id}")
 async def stream(job_id: str):
+    try:
+        _uuid.UUID(job_id)
+    except ValueError:
+        raise HTTPException(400, "Invalid job_id format")
     queue = progress.subscribe(job_id)
 
     async def _gen():

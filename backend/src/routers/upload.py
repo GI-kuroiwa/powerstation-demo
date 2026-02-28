@@ -28,12 +28,17 @@ _INSERT_SQL = """INSERT INTO invoices (
 ON CONFLICT (source_file_hash, invoice_no) DO NOTHING"""
 
 
+_MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+
+
 @router.post("/api/upload")
 async def upload(file: UploadFile = File(...)):
     if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(400, "CSVファイルのみ対応しています")
 
     raw = await file.read()
+    if len(raw) > _MAX_FILE_SIZE:
+        raise HTTPException(413, "ファイルサイズが上限（10MB）を超えています")
     text = raw.decode("utf-8-sig")
     file_hash = hashlib.sha256(raw).hexdigest()
     rows = parse_csv(text)

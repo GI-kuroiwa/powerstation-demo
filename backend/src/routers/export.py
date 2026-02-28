@@ -2,6 +2,7 @@
 
 import csv
 import io
+import uuid as _uuid
 
 from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
@@ -23,6 +24,10 @@ _COLUMNS = [
 
 @router.get("/api/export/exceptions/{job_id}.csv")
 def export_exceptions(job_id: str):
+    try:
+        _uuid.UUID(job_id)
+    except ValueError:
+        raise HTTPException(400, "Invalid job_id format")
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT source_file_hash FROM jobs WHERE job_id = %s", (job_id,))

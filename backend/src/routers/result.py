@@ -1,5 +1,6 @@
 """GET /api/result/{job_id} — 検算結果取得"""
 
+import uuid as _uuid
 from datetime import datetime
 from decimal import Decimal
 
@@ -13,6 +14,10 @@ router = APIRouter()
 
 @router.get("/api/result/{job_id}")
 def result(job_id: str):
+    try:
+        _uuid.UUID(job_id)
+    except ValueError:
+        raise HTTPException(400, "Invalid job_id format")
     with get_conn() as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT * FROM jobs WHERE job_id = %s", (job_id,))
