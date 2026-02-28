@@ -7,9 +7,9 @@ import CalculateIcon from '@mui/icons-material/Calculate';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 
 export const Header = () => (
-  <AppBar position="sticky" color="primary">
+  <AppBar position="sticky" sx={{ bgcolor: '#1a2028', borderBottom: '1px solid #2d3748' }}>
     <Toolbar>
-      <CalculateIcon sx={{ mr: 1.5 }} />
+      <CalculateIcon sx={{ mr: 1.5, color: '#f5c518' }} />
       <Typography variant="h6" sx={{ flexGrow: 1, fontWeight: 700 }}>
         PowerStation 請求検算AI
       </Typography>
@@ -19,9 +19,9 @@ export const Header = () => (
           label="demo_user"
           size="small"
           sx={{
-            bgcolor: 'rgba(255,255,255,0.15)',
-            color: 'white',
-            '& .MuiChip-icon': { color: 'white' },
+            bgcolor: 'rgba(92,156,230,0.15)',
+            color: 'primary.light',
+            '& .MuiChip-icon': { color: 'primary.light' },
           }}
         />
       </Box>

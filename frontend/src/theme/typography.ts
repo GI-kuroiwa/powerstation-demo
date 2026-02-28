@@ -36,6 +36,6 @@ export const typography: ThemeOptions['typography'] = {
   },
   caption: {
     fontSize: '0.75rem',
-    color: '#5a6a7a',
+    color: '#9aa0a6',
   },
 };

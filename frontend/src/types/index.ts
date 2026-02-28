@@ -91,3 +91,13 @@ export interface ProgressEvent {
 export interface UploadResponse {
   job_id: string;
 }
+
+// === API Paths ===
+export const API_PATHS = {
+  upload: '/api/upload',
+  stream: (jobId: string) => `/api/stream/${jobId}`,
+  result: (jobId: string) => `/api/result/${jobId}`,
+  sampleCsv: '/api/sample-csv',
+  exportExceptions: (jobId: string) => `/api/export/exceptions/${jobId}.csv`,
+  health: '/api/health',
+} as const;

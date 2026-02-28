@@ -4,7 +4,7 @@ export const components: Components<Theme> = {
   MuiCssBaseline: {
     styleOverrides: {
       body: {
-        backgroundColor: '#f5f7fa',
+        backgroundColor: '#0f1318',
       },
     },
   },
@@ -16,9 +16,16 @@ export const components: Components<Theme> = {
         fontWeight: 600,
       },
       containedPrimary: {
-        boxShadow: '0 2px 8px rgba(21, 101, 192, 0.3)',
+        boxShadow: '0 2px 8px rgba(92, 156, 230, 0.3)',
         '&:hover': {
-          boxShadow: '0 4px 12px rgba(21, 101, 192, 0.4)',
+          boxShadow: '0 4px 12px rgba(92, 156, 230, 0.4)',
+        },
+      },
+      containedSecondary: {
+        color: '#1a2028',
+        boxShadow: '0 2px 8px rgba(245, 197, 24, 0.3)',
+        '&:hover': {
+          boxShadow: '0 4px 12px rgba(245, 197, 24, 0.4)',
         },
       },
     },
@@ -27,6 +34,7 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: {
         borderRadius: 12,
+        backgroundImage: 'none',
       },
     },
     defaultProps: {
@@ -38,7 +46,8 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: {
         borderRadius: 12,
-        border: '1px solid #e0e4ea',
+        border: '1px solid #2d3748',
+        backgroundImage: 'none',
       },
     },
     defaultProps: {
@@ -48,7 +57,8 @@ export const components: Components<Theme> = {
   MuiAppBar: {
     styleOverrides: {
       root: {
-        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.08)',
+        boxShadow: '0 1px 3px rgba(0, 0, 0, 0.3)',
+        backgroundImage: 'none',
       },
     },
     defaultProps: {
@@ -77,9 +87,16 @@ export const components: Components<Theme> = {
       root: {
         '& .MuiTableCell-head': {
           fontWeight: 700,
-          backgroundColor: '#f5f7fa',
-          color: '#1a2027',
+          backgroundColor: '#151c25',
+          color: '#e8eaed',
         },
+      },
+    },
+  },
+  MuiTableCell: {
+    styleOverrides: {
+      root: {
+        borderColor: '#2d3748',
       },
     },
   },
@@ -87,7 +104,16 @@ export const components: Components<Theme> = {
     styleOverrides: {
       root: {
         borderRadius: 4,
-        height: 8,
+        height: 10,
+        backgroundColor: '#2d3748',
+      },
+    },
+  },
+  MuiAccordion: {
+    styleOverrides: {
+      root: {
+        backgroundImage: 'none',
+        '&:before': { display: 'none' },
       },
     },
   },

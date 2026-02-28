@@ -11,7 +11,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => (
   <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
     <Header />
     <Container
-      maxWidth="lg"
+      maxWidth="xl"
       sx={{ flex: 1, py: 3 }}
     >
       {children}
