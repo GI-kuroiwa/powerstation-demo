@@ -39,6 +39,7 @@ def notify_exceptions(job_id: str, exceptions: list[dict]) -> None:
     for ex in exceptions:
         branch = ex.get("branch", "不明")
         invoice_no = ex.get("invoice_no", "-")
+        customer = ex.get("customer_name", "-")
         diff = ex.get("diff_amount", 0)
         reason = ex.get("reason_text") or "理由未生成"
         blocks.append(
@@ -47,9 +48,15 @@ def notify_exceptions(job_id: str, exceptions: list[dict]) -> None:
                 "fields": [
                     {"type": "mrkdwn", "text": f"*営業所:* {branch}"},
                     {"type": "mrkdwn", "text": f"*請求No:* {invoice_no}"},
+                    {"type": "mrkdwn", "text": f"*顧客名:* {customer}"},
                     {"type": "mrkdwn", "text": f"*差額:* {diff:+,}円"},
-                    {"type": "mrkdwn", "text": f"*理由:* {reason}"},
                 ],
+            }
+        )
+        blocks.append(
+            {
+                "type": "context",
+                "elements": [{"type": "mrkdwn", "text": f"_{reason}_"}],
             }
         )
 

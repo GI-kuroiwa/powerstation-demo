@@ -123,6 +123,7 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started, loop):
                     {
                         "branch": result["branch"],
                         "invoice_no": result["invoice_no"],
+                        "customer_name": result["customer_name"],
                         "diff_amount": result["diff_amount"],
                         "reason_text": reason_text,
                     }
