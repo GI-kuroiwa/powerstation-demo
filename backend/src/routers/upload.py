@@ -13,6 +13,7 @@ from src.calculator import calc_row
 from src.csv_parser import parse_csv
 from src.db import get_conn
 from src import progress
+from src.slack_notify import notify_exceptions
 
 router = APIRouter()
 log = logging.getLogger(__name__)
@@ -104,6 +105,7 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started, loop):
             branch_map[b]["total"] += 1
 
         total = len(rows)
+        exception_rows: list[dict] = []
 
         for i, row in enumerate(rows):
             branch = row.get("branch") or "不明"
@@ -117,6 +119,14 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started, loop):
 
             if result["status"] == "EXCEPTION":
                 reason_text, suggested_action = _gen_reason(result)
+                exception_rows.append(
+                    {
+                        "branch": result["branch"],
+                        "invoice_no": result["invoice_no"],
+                        "diff_amount": result["diff_amount"],
+                        "reason_text": reason_text,
+                    }
+                )
 
             _insert_invoice(cur, conn, job_id, file_hash, result, reason_text, suggested_action)
 
@@ -149,6 +159,8 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started, loop):
         )
         conn.commit()
         cur.close()
+
+        notify_exceptions(job_id, exception_rows)
 
         _publish_sync(loop, job_id, {"event": "done", "job_id": job_id})
         import time
