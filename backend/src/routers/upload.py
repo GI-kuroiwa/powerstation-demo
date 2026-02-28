@@ -55,7 +55,7 @@ async def upload(file: UploadFile = File(...)):
 
 
 async def _process(job_id: str, file_hash: str, rows: list):
-    loop = asyncio.get_event_loop()
+    loop = asyncio.get_running_loop()
     started = datetime.now(timezone.utc)
 
     try:
@@ -66,6 +66,7 @@ async def _process(job_id: str, file_hash: str, rows: list):
             file_hash,
             rows,
             started,
+            loop,
         )
     except Exception as e:
         log.exception("Processing failed for job %s", job_id)
@@ -80,7 +81,7 @@ async def _process(job_id: str, file_hash: str, rows: list):
         progress.cleanup(job_id)
 
 
-def _run_sync(job_id: str, file_hash: str, rows: list, started):
+def _run_sync(job_id: str, file_hash: str, rows: list, started, loop):
     """同期処理（スレッドプール内で実行）"""
     conn = get_conn()
     try:
@@ -126,6 +127,7 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started):
             conn.commit()
 
             _publish_sync(
+                loop,
                 job_id,
                 {
                     "processed": processed,
@@ -143,7 +145,7 @@ def _run_sync(job_id: str, file_hash: str, rows: list, started):
         conn.commit()
         cur.close()
 
-        _publish_sync(job_id, {"event": "done", "job_id": job_id})
+        _publish_sync(loop, job_id, {"event": "done", "job_id": job_id})
         import time
 
         time.sleep(0.5)
@@ -194,15 +196,5 @@ def _insert_invoice(cur, conn, job_id, file_hash, result, reason_text, suggested
     conn.commit()
 
 
-def _publish_sync(job_id: str, event: dict):
-    import asyncio as _aio
-
-    try:
-        loop = _aio.get_event_loop()
-        if loop.is_running():
-            _aio.run_coroutine_threadsafe(
-                progress.publish(job_id, event),
-                loop,
-            )
-    except RuntimeError:
-        pass
+def _publish_sync(loop, job_id: str, event: dict):
+    asyncio.run_coroutine_threadsafe(progress.publish(job_id, event), loop)

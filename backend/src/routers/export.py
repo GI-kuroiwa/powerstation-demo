@@ -25,9 +25,13 @@ _COLUMNS = [
 def export_exceptions(job_id: str):
     with get_conn() as conn:
         with conn.cursor() as cur:
+            cur.execute("SELECT source_file_hash FROM jobs WHERE job_id = %s", (job_id,))
+            job = cur.fetchone()
+            if not job:
+                raise HTTPException(404, "Job not found")
             cur.execute(
-                "SELECT * FROM invoices WHERE job_id = %s AND status = 'EXCEPTION'" " ORDER BY id",
-                (job_id,),
+                "SELECT * FROM invoices WHERE source_file_hash = %s AND status = 'EXCEPTION' ORDER BY id",
+                (job["source_file_hash"],),
             )
             rows = cur.fetchall()
 

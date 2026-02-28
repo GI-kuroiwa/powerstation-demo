@@ -20,9 +20,10 @@ def result(job_id: str):
             if not job:
                 raise HTTPException(404, "Job not found")
 
+            file_hash = job["source_file_hash"]
             cur.execute(
-                "SELECT * FROM invoices WHERE job_id = %s ORDER BY id",
-                (job_id,),
+                "SELECT * FROM invoices WHERE source_file_hash = %s ORDER BY id",
+                (file_hash,),
             )
             invoices = cur.fetchall()
 

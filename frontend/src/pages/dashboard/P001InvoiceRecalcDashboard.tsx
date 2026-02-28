@@ -1,8 +1,10 @@
-import { useState, useCallback, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
+import Alert from '@mui/material/Alert';
+import CircularProgress from '@mui/material/CircularProgress';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import DownloadIcon from '@mui/icons-material/Download';
 import FileDownloadIcon from '@mui/icons-material/FileDownload';
@@ -14,64 +16,23 @@ import { SummaryTab } from './SummaryTab';
 import { BranchTab } from './BranchTab';
 import { ExceptionsTab } from './ExceptionsTab';
 import { AuditLogTab } from './AuditLogTab';
-import {
-  buildMockInvoices,
-  buildMockSummary,
-  buildMockBranchSummary,
-  buildMockBranchStatus,
-} from '../../mocks/dashboardMock';
-
-type Phase = 'idle' | 'running' | 'done';
+import { useInvoiceRecalc } from '../../hooks/useInvoiceRecalc';
 
 export const P001InvoiceRecalcDashboard = () => {
-  const [file, setFile] = useState<File | null>(null);
-  const [phase, setPhase] = useState<Phase>('idle');
+  const {
+    file, setFile, phase, progress, result, error,
+    start, reset, handleSampleDl, handleExportExceptions,
+  } = useInvoiceRecalc();
   const [tab, setTab] = useState(0);
 
-  const invoices = useMemo(() => buildMockInvoices(), []);
-  const summary = useMemo(() => buildMockSummary(), []);
-  const branches = useMemo(() => buildMockBranchSummary(), []);
-  const branchStatus = useMemo(() => buildMockBranchStatus(), []);
-  const exceptions = useMemo(() => invoices.filter((i) => i.status === 'EXCEPTION'), [invoices]);
+  const exceptions = useMemo(
+    () => result?.exceptions ?? [],
+    [result],
+  );
 
-  const handleStart = useCallback(() => {
-    setPhase('running');
-    setTimeout(() => setPhase('done'), 2000);
-  }, []);
-
-  const handleReset = useCallback(() => {
-    setFile(null);
-    setPhase('idle');
-    setTab(0);
-  }, []);
-
-  const handleSampleDl = useCallback(() => {
-    const blob = new Blob(['sample CSV content'], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'sample_90.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }, []);
-
-  const handleExportExceptions = useCallback(() => {
-    const header = 'invoice_no,branch,customer_name,diff_amount,reason_code,reason_text,suggested_action\n';
-    const rows = exceptions.map((e) =>
-      [e.invoice_no, e.branch, e.customer_name, e.diff_amount, e.reason_code, e.reason_text, e.suggested_action]
-        .map((v) => `"${String(v ?? '').replace(/"/g, '""')}"`)
-        .join(',')
-    ).join('\n');
-    const blob = new Blob([header + rows], { type: 'text/csv' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'exceptions_mock.csv';
-    a.click();
-    URL.revokeObjectURL(url);
-  }, [exceptions]);
-
-  const showResults = phase === 'running' || phase === 'done';
+  const showProgress = phase === 'uploading' || phase === 'running' || phase === 'done';
+  const showResults = phase === 'done' && result;
+  const isProcessing = phase === 'uploading' || phase === 'running';
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
@@ -83,12 +44,12 @@ export const P001InvoiceRecalcDashboard = () => {
         <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1, minWidth: 180 }}>
           <Button
             variant="contained" color="secondary" size="large"
-            startIcon={<PlayArrowIcon />}
+            startIcon={isProcessing ? <CircularProgress size={20} color="inherit" /> : <PlayArrowIcon />}
             disabled={!file || phase !== 'idle'}
-            onClick={handleStart}
+            onClick={start}
             sx={{ fontWeight: 700 }}
           >
-            検算開始
+            {isProcessing ? '処理中...' : '検算開始'}
           </Button>
           <Button
             variant="outlined" size="small"
@@ -109,7 +70,7 @@ export const P001InvoiceRecalcDashboard = () => {
               <Button
                 variant="outlined" size="small"
                 startIcon={<RestartAltIcon />}
-                onClick={handleReset}
+                onClick={reset}
               >
                 リセット
               </Button>
@@ -120,16 +81,21 @@ export const P001InvoiceRecalcDashboard = () => {
 
       <ProcessingRules />
 
-      {/* Progress + Results */}
+      {error && <Alert severity="error" sx={{ mt: 1 }}>{error}</Alert>}
+
+      {/* Progress */}
+      {showProgress && (
+        <ProgressSection
+          processed={progress.processed}
+          total={progress.total}
+          percent={progress.percent}
+          branchStatus={progress.branchStatus}
+        />
+      )}
+
+      {/* Results */}
       {showResults && (
         <>
-          <ProgressSection
-            processed={phase === 'done' ? 90 : 67}
-            total={90}
-            percent={phase === 'done' ? 100 : 74}
-            branchStatus={branchStatus}
-          />
-
           <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
             <Tabs value={tab} onChange={(_, v) => setTab(v)}>
               <Tab label="全体サマリ" />
@@ -139,10 +105,10 @@ export const P001InvoiceRecalcDashboard = () => {
             </Tabs>
           </Box>
 
-          {tab === 0 && <SummaryTab summary={summary} />}
-          {tab === 1 && <BranchTab branches={branches} />}
+          {tab === 0 && <SummaryTab summary={result.summary} />}
+          {tab === 1 && <BranchTab branches={result.branch_summary} />}
           {tab === 2 && <ExceptionsTab exceptions={exceptions} />}
-          {tab === 3 && <AuditLogTab invoices={invoices} />}
+          {tab === 3 && <AuditLogTab invoices={result.audit_logs} />}
         </>
       )}
     </Box>
