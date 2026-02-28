@@ -1,0 +1,1957 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PowerStation 請求検算AI - デザインテーマ選定</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+JP:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet">
+<style>
+/* ============================================================
+   RESET & BASE
+   ============================================================ */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { font-size: 15px; scroll-behavior: smooth; }
+body {
+  font-family: 'Inter', 'Noto Sans JP', -apple-system, BlinkMacSystemFont, sans-serif;
+  background: #f0f2f5;
+  color: #333;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ============================================================
+   THEME SELECTOR HEADER
+   ============================================================ */
+.selector-header {
+  position: sticky; top: 0; z-index: 1000;
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 20px 32px 0;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.25);
+}
+.selector-title {
+  color: #fff;
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.selector-title .badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 6px;
+  padding: 2px 10px;
+  font-size: 0.7rem;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  color: rgba(255,255,255,0.8);
+}
+
+/* Tabs */
+.theme-tabs {
+  display: flex;
+  gap: 4px;
+}
+.theme-tab {
+  padding: 10px 24px;
+  border: none;
+  background: rgba(255,255,255,0.06);
+  color: rgba(255,255,255,0.6);
+  font-size: 0.85rem;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 10px 10px 0 0;
+  transition: all 0.25s ease;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+.theme-tab:hover {
+  background: rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.85);
+}
+.theme-tab.active {
+  background: var(--tab-active-bg, #fff);
+  color: var(--tab-active-color, #333);
+  font-weight: 600;
+}
+.theme-tab .dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  display: inline-block;
+}
+
+/* Tab colors */
+.theme-tab[data-theme="clean"] .dot { background: #1976d2; }
+.theme-tab[data-theme="dark"] .dot { background: #bb86fc; }
+.theme-tab[data-theme="earth"] .dot { background: #a1887f; }
+.theme-tab[data-theme="vivid"] .dot { background: #ff6d00; }
+
+/* ============================================================
+   THEME CONTENT AREA
+   ============================================================ */
+.theme-content {
+  display: none;
+  min-height: 100vh;
+}
+.theme-content.active {
+  display: block;
+}
+
+/* ============================================================
+   THEME 1: CLEAN BUSINESS (BLUE)
+   ============================================================ */
+.theme-clean {
+  --bg: #f5f7fa;
+  --surface: #ffffff;
+  --primary: #1565c0;
+  --primary-light: #e3f2fd;
+  --primary-dark: #0d47a1;
+  --text: #263238;
+  --text-secondary: #546e7a;
+  --border: #e0e4e8;
+  --success: #2e7d32;
+  --success-bg: #e8f5e9;
+  --error: #c62828;
+  --error-bg: #ffebee;
+  --warning: #f57f17;
+  --shadow: 0 1px 3px rgba(0,0,0,0.08), 0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+/* Header */
+.clean-header {
+  background: linear-gradient(135deg, #1565c0 0%, #1976d2 40%, #42a5f5 100%);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(21,101,192,0.3);
+}
+.clean-header h1 {
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.clean-header h1 .icon {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.clean-header .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.clean-header .header-actions span {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
+}
+
+.theme-clean .dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+/* Upload area */
+.clean-upload {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+.clean-dropzone {
+  flex: 1;
+  border: 2px dashed #90caf9;
+  border-radius: 10px;
+  padding: 36px 24px;
+  text-align: center;
+  background: #f5f9ff;
+  transition: all 0.2s;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+.clean-dropzone:hover {
+  border-color: var(--primary);
+  background: #e8f0fe;
+}
+.clean-dropzone .material-icons-outlined {
+  font-size: 42px;
+  color: var(--primary);
+  opacity: 0.7;
+}
+.clean-dropzone p {
+  color: var(--text-secondary);
+  font-size: 0.88rem;
+}
+.clean-dropzone .file-name {
+  color: var(--primary);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+.clean-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+  justify-content: center;
+}
+.btn-clean-primary {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-clean-primary:hover { background: var(--primary-dark); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(21,101,192,0.3); }
+.btn-clean-secondary {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #bbdefb;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-clean-secondary:hover { background: #bbdefb; }
+
+/* Processing rules */
+.clean-rules {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.clean-rules summary {
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  list-style: none;
+}
+.clean-rules summary::-webkit-details-marker { display: none; }
+.clean-rules .rules-content {
+  padding: 0 24px 16px;
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+.rule-chip {
+  background: #f0f4f8;
+  border-radius: 6px;
+  padding: 6px 14px;
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rule-chip .material-icons-outlined { font-size: 16px; color: var(--primary); }
+
+/* Progress */
+.clean-progress {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.progress-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+}
+.progress-header h3 {
+  font-size: 0.92rem;
+  font-weight: 600;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.progress-header .count {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--primary);
+}
+.progress-bar-track {
+  height: 10px;
+  background: #e3e8ee;
+  border-radius: 5px;
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+.progress-bar-fill {
+  height: 100%;
+  border-radius: 5px;
+  transition: width 0.6s ease;
+}
+.theme-clean .progress-bar-fill {
+  background: linear-gradient(90deg, #1565c0, #42a5f5);
+}
+.branch-status {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.branch-chip {
+  font-size: 0.82rem;
+  padding: 6px 14px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.branch-chip.done {
+  background: var(--success-bg);
+  color: var(--success);
+}
+.branch-chip.processing {
+  background: #fff8e1;
+  color: #f57f17;
+}
+
+/* Result tabs */
+.clean-tabs-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  overflow: hidden;
+}
+.result-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--border);
+  padding: 0 8px;
+}
+.result-tab {
+  padding: 14px 22px;
+  border: none;
+  background: none;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.result-tab:hover { color: var(--text); }
+.result-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+  font-weight: 600;
+}
+.result-tab .count-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  border-radius: 10px;
+  font-weight: 600;
+}
+.theme-clean .result-tab .count-badge {
+  background: var(--error-bg);
+  color: var(--error);
+}
+.result-panel {
+  display: none;
+  padding: 24px;
+}
+.result-panel.active { display: block; }
+
+/* Summary cards */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 16px;
+}
+.summary-card {
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+}
+.summary-card .label {
+  font-size: 0.78rem;
+  font-weight: 500;
+  margin-bottom: 6px;
+}
+.summary-card .value {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+.theme-clean .summary-card {
+  background: #f5f9ff;
+  border: 1px solid #e3edf7;
+}
+.theme-clean .summary-card .label { color: var(--text-secondary); }
+.theme-clean .summary-card .value { color: var(--primary-dark); }
+.theme-clean .summary-card.exception { background: #fff5f5; border-color: #ffcdd2; }
+.theme-clean .summary-card.exception .value { color: var(--error); }
+
+/* Table */
+.data-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  font-size: 0.84rem;
+}
+.data-table thead th {
+  padding: 12px 16px;
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.theme-clean .data-table thead th {
+  background: #f5f7fa;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+.data-table tbody td {
+  padding: 12px 16px;
+  border-bottom: 1px solid #f0f2f5;
+}
+.data-table tbody tr:hover td {
+  background: #fafbfc;
+}
+.status-ok {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.theme-clean .status-ok { background: var(--success-bg); color: var(--success); }
+.status-exception {
+  padding: 3px 10px;
+  border-radius: 4px;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+.theme-clean .status-exception { background: var(--error-bg); color: var(--error); }
+.diff-red { color: var(--error); font-weight: 600; }
+
+/* Exception detail */
+.exception-detail {
+  background: #fafbfc;
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-top: 10px;
+  border-left: 3px solid var(--primary);
+}
+.exception-detail .ai-reason {
+  font-size: 0.84rem;
+  line-height: 1.7;
+  color: var(--text);
+  margin-bottom: 10px;
+}
+.exception-detail .ai-action {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  padding: 10px 14px;
+  background: #fff;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+}
+
+/* Export button */
+.btn-export {
+  margin-top: 16px;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.theme-clean .btn-export {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.theme-clean .btn-export:hover { background: #f5f7fa; border-color: var(--primary); color: var(--primary); }
+
+/* ============================================================
+   THEME 2: MODERN DARK
+   ============================================================ */
+.theme-dark {
+  --bg: #0f0f14;
+  --surface: #1a1a24;
+  --surface-hover: #22222e;
+  --primary: #bb86fc;
+  --primary-light: rgba(187,134,252,0.12);
+  --primary-dark: #9c64e8;
+  --accent: #03dac6;
+  --text: #e8e8ec;
+  --text-secondary: #9899a6;
+  --border: #2a2a38;
+  --success: #4caf50;
+  --success-bg: rgba(76,175,80,0.12);
+  --error: #ff5252;
+  --error-bg: rgba(255,82,82,0.12);
+  --shadow: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-md: 0 8px 24px rgba(0,0,0,0.4);
+  --radius: 14px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.dark-header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #22223a 100%);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(187,134,252,0.15);
+}
+.dark-header h1 {
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dark-header h1 .icon {
+  background: var(--primary-light);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+  color: var(--primary);
+}
+.dark-header .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.dark-header .header-actions span {
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+}
+
+.theme-dark .dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+/* Upload */
+.dark-upload {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 28px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+}
+.dark-dropzone {
+  flex: 1;
+  border: 2px dashed rgba(187,134,252,0.3);
+  border-radius: 10px;
+  padding: 36px 24px;
+  text-align: center;
+  background: rgba(187,134,252,0.04);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.dark-dropzone:hover {
+  border-color: var(--primary);
+  background: rgba(187,134,252,0.08);
+}
+.dark-dropzone .material-icons-outlined { font-size: 42px; color: var(--primary); opacity: 0.8; }
+.dark-dropzone p { color: var(--text-secondary); font-size: 0.88rem; }
+.dark-dropzone .file-name { color: var(--primary); font-weight: 600; }
+.dark-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+  justify-content: center;
+}
+.btn-dark-primary {
+  background: linear-gradient(135deg, #bb86fc 0%, #9c64e8 100%);
+  color: #1a1a24;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-dark-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(187,134,252,0.4); }
+.btn-dark-secondary {
+  background: rgba(187,134,252,0.1);
+  color: var(--primary);
+  border: 1px solid rgba(187,134,252,0.2);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-dark-secondary:hover { background: rgba(187,134,252,0.18); }
+
+/* Rules */
+.dark-rules {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.dark-rules summary {
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.dark-rules summary::-webkit-details-marker { display: none; }
+.dark-rules .rules-content {
+  padding: 0 24px 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.theme-dark .rule-chip {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.theme-dark .rule-chip .material-icons-outlined { color: var(--primary); }
+
+/* Progress */
+.dark-progress {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.theme-dark .progress-header h3 { color: var(--text); }
+.theme-dark .progress-header .count { color: var(--primary); }
+.theme-dark .progress-bar-track { background: #2a2a38; }
+.theme-dark .progress-bar-fill {
+  background: linear-gradient(90deg, #9c64e8, #bb86fc, #03dac6);
+}
+.theme-dark .branch-chip.done { background: var(--success-bg); color: var(--success); }
+.theme-dark .branch-chip.processing { background: rgba(255,193,7,0.12); color: #ffc107; }
+
+/* Tabs */
+.dark-tabs-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.theme-dark .result-tabs {
+  border-bottom-color: var(--border);
+  padding: 0 8px;
+  background: rgba(0,0,0,0.2);
+}
+.theme-dark .result-tab {
+  color: var(--text-secondary);
+}
+.theme-dark .result-tab:hover { color: var(--text); }
+.theme-dark .result-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.theme-dark .result-tab .count-badge {
+  background: var(--error-bg);
+  color: var(--error);
+}
+
+/* Summary */
+.theme-dark .summary-card {
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.theme-dark .summary-card .label { color: var(--text-secondary); }
+.theme-dark .summary-card .value { color: var(--primary); }
+.theme-dark .summary-card.exception { background: var(--error-bg); border-color: rgba(255,82,82,0.2); }
+.theme-dark .summary-card.exception .value { color: var(--error); }
+
+/* Table */
+.theme-dark .data-table thead th {
+  background: rgba(0,0,0,0.3);
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+.theme-dark .data-table tbody td {
+  border-bottom-color: var(--border);
+  color: var(--text);
+}
+.theme-dark .data-table tbody tr:hover td { background: var(--surface-hover); }
+.theme-dark .status-ok { background: var(--success-bg); color: var(--success); }
+.theme-dark .status-exception { background: var(--error-bg); color: var(--error); }
+
+.theme-dark .exception-detail {
+  background: rgba(0,0,0,0.2);
+  border-left-color: var(--primary);
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--primary);
+}
+.theme-dark .exception-detail .ai-reason { color: var(--text); }
+.theme-dark .exception-detail .ai-action {
+  color: var(--text-secondary);
+  background: rgba(0,0,0,0.2);
+  border-color: var(--border);
+}
+.theme-dark .btn-export {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.theme-dark .btn-export:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ============================================================
+   THEME 3: EARTH / WARM NATURAL
+   ============================================================ */
+.theme-earth {
+  --bg: #faf6f1;
+  --surface: #ffffff;
+  --primary: #795548;
+  --primary-light: #efebe9;
+  --primary-dark: #5d4037;
+  --accent: #558b2f;
+  --text: #3e2723;
+  --text-secondary: #8d6e63;
+  --border: #e8ddd4;
+  --success: #558b2f;
+  --success-bg: #f1f8e9;
+  --error: #bf360c;
+  --error-bg: #fbe9e7;
+  --warning: #ef6c00;
+  --shadow: 0 1px 4px rgba(62,39,35,0.06);
+  --shadow-md: 0 4px 16px rgba(62,39,35,0.08);
+  --radius: 14px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.earth-header {
+  background: linear-gradient(135deg, #5d4037 0%, #795548 40%, #a1887f 100%);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(93,64,55,0.25);
+}
+.earth-header h1 {
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.earth-header h1 .icon {
+  background: rgba(255,255,255,0.15);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+}
+.earth-header .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.earth-header .header-actions span {
+  color: rgba(255,255,255,0.8);
+  font-size: 0.8rem;
+}
+
+.theme-earth .dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+/* Upload */
+.earth-upload {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 28px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  border: 1px solid var(--border);
+}
+.earth-dropzone {
+  flex: 1;
+  border: 2px dashed #bcaaa4;
+  border-radius: 10px;
+  padding: 36px 24px;
+  text-align: center;
+  background: #fdf8f4;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.earth-dropzone:hover { border-color: var(--primary); background: var(--primary-light); }
+.earth-dropzone .material-icons-outlined { font-size: 42px; color: var(--primary); opacity: 0.7; }
+.earth-dropzone p { color: var(--text-secondary); font-size: 0.88rem; }
+.earth-dropzone .file-name { color: var(--primary); font-weight: 600; }
+.earth-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+  justify-content: center;
+}
+.btn-earth-primary {
+  background: linear-gradient(135deg, #795548, #5d4037);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-earth-primary:hover { background: linear-gradient(135deg, #5d4037, #4e342e); transform: translateY(-1px); box-shadow: 0 4px 12px rgba(93,64,55,0.3); }
+.btn-earth-secondary {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #d7ccc8;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-earth-secondary:hover { background: #d7ccc8; }
+
+/* Rules */
+.earth-rules {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.earth-rules summary {
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.earth-rules summary::-webkit-details-marker { display: none; }
+.earth-rules .rules-content {
+  padding: 0 24px 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.theme-earth .rule-chip {
+  background: #fdf8f4;
+  border: 1px solid var(--border);
+  color: var(--text-secondary);
+}
+.theme-earth .rule-chip .material-icons-outlined { color: var(--accent); }
+
+/* Progress */
+.earth-progress {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.theme-earth .progress-header h3 { color: var(--text); }
+.theme-earth .progress-header .count { color: var(--accent); }
+.theme-earth .progress-bar-track { background: #e8ddd4; }
+.theme-earth .progress-bar-fill {
+  background: linear-gradient(90deg, #795548, #a1887f, #558b2f);
+}
+.theme-earth .branch-chip.done { background: var(--success-bg); color: var(--success); }
+.theme-earth .branch-chip.processing { background: #fff3e0; color: var(--warning); }
+
+/* Tabs */
+.earth-tabs-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.theme-earth .result-tabs {
+  border-bottom-color: var(--border);
+  background: #fdf8f4;
+}
+.theme-earth .result-tab { color: var(--text-secondary); }
+.theme-earth .result-tab:hover { color: var(--text); }
+.theme-earth .result-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.theme-earth .result-tab .count-badge {
+  background: var(--error-bg);
+  color: var(--error);
+}
+.theme-earth .summary-card {
+  background: #fdf8f4;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+}
+.theme-earth .summary-card .label { color: var(--text-secondary); }
+.theme-earth .summary-card .value { color: var(--primary-dark); }
+.theme-earth .summary-card.exception { background: var(--error-bg); border-color: #ffab91; }
+.theme-earth .summary-card.exception .value { color: var(--error); }
+
+.theme-earth .data-table thead th {
+  background: #fdf8f4;
+  color: var(--text-secondary);
+  border-bottom: 1px solid var(--border);
+}
+.theme-earth .data-table tbody td { border-bottom-color: #f0e8e0; }
+.theme-earth .data-table tbody tr:hover td { background: #fdf8f4; }
+.theme-earth .status-ok { background: var(--success-bg); color: var(--success); }
+.theme-earth .status-exception { background: var(--error-bg); color: var(--error); }
+.theme-earth .exception-detail {
+  background: #fdf8f4;
+  border-left-color: var(--accent);
+}
+.theme-earth .exception-detail .ai-action {
+  background: #fff;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+.theme-earth .btn-export {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.theme-earth .btn-export:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ============================================================
+   THEME 4: HIGH CONTRAST / VIVID
+   ============================================================ */
+.theme-vivid {
+  --bg: #fafafa;
+  --surface: #ffffff;
+  --primary: #e65100;
+  --primary-light: #fff3e0;
+  --primary-dark: #bf360c;
+  --accent: #00bfa5;
+  --text: #212121;
+  --text-secondary: #616161;
+  --border: #e0e0e0;
+  --success: #00c853;
+  --success-bg: #e8f5e9;
+  --error: #d50000;
+  --error-bg: #ffebee;
+  --warning: #ff6d00;
+  --shadow: 0 1px 4px rgba(0,0,0,0.08);
+  --shadow-md: 0 4px 16px rgba(0,0,0,0.1);
+  --radius: 12px;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.vivid-header {
+  background: linear-gradient(135deg, #e65100 0%, #ff6d00 50%, #ff9100 100%);
+  padding: 24px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-shadow: 0 3px 16px rgba(230,81,0,0.3);
+}
+.vivid-header h1 {
+  color: #fff;
+  font-size: 1.35rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.vivid-header h1 .icon {
+  background: rgba(255,255,255,0.2);
+  border-radius: 10px;
+  padding: 8px;
+  display: flex;
+}
+.vivid-header .header-actions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.vivid-header .header-actions span {
+  color: rgba(255,255,255,0.9);
+  font-size: 0.8rem;
+}
+
+.theme-vivid .dashboard {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 28px 32px;
+}
+
+/* Upload */
+.vivid-upload {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 28px;
+  margin-bottom: 24px;
+  display: flex;
+  gap: 24px;
+  align-items: stretch;
+  border: 1px solid var(--border);
+}
+.vivid-dropzone {
+  flex: 1;
+  border: 2px dashed #ffab40;
+  border-radius: 10px;
+  padding: 36px 24px;
+  text-align: center;
+  background: #fff8f0;
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  transition: all 0.2s;
+}
+.vivid-dropzone:hover { border-color: var(--primary); background: var(--primary-light); }
+.vivid-dropzone .material-icons-outlined { font-size: 42px; color: var(--primary); }
+.vivid-dropzone p { color: var(--text-secondary); font-size: 0.88rem; }
+.vivid-dropzone .file-name { color: var(--primary); font-weight: 600; }
+.vivid-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 180px;
+  justify-content: center;
+}
+.btn-vivid-primary {
+  background: linear-gradient(135deg, #e65100, #ff6d00);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.btn-vivid-primary:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(230,81,0,0.4); }
+.btn-vivid-secondary {
+  background: var(--primary-light);
+  color: var(--primary);
+  border: 1px solid #ffcc80;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.82rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  transition: all 0.2s;
+}
+.btn-vivid-secondary:hover { background: #ffe0b2; }
+
+/* Rules */
+.vivid-rules {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  margin-bottom: 24px;
+}
+.vivid-rules summary {
+  padding: 14px 24px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: var(--text-secondary);
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.vivid-rules summary::-webkit-details-marker { display: none; }
+.vivid-rules .rules-content {
+  padding: 0 24px 16px;
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.theme-vivid .rule-chip {
+  background: #fff8f0;
+  border: 1px solid #ffe0b2;
+  color: var(--text-secondary);
+}
+.theme-vivid .rule-chip .material-icons-outlined { color: var(--primary); }
+
+/* Progress */
+.vivid-progress {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  padding: 24px 28px;
+  margin-bottom: 24px;
+}
+.theme-vivid .progress-header h3 { color: var(--text); }
+.theme-vivid .progress-header .count { color: var(--primary); }
+.theme-vivid .progress-bar-track { background: #f0f0f0; }
+.theme-vivid .progress-bar-fill {
+  background: linear-gradient(90deg, #e65100, #ff6d00, #00bfa5);
+}
+.theme-vivid .branch-chip.done { background: var(--success-bg); color: #00c853; }
+.theme-vivid .branch-chip.processing { background: var(--primary-light); color: var(--primary); }
+
+/* Tabs */
+.vivid-tabs-container {
+  background: var(--surface);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.theme-vivid .result-tabs {
+  border-bottom-color: var(--border);
+  background: #fafafa;
+}
+.theme-vivid .result-tab { color: var(--text-secondary); }
+.theme-vivid .result-tab:hover { color: var(--text); }
+.theme-vivid .result-tab.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+.theme-vivid .result-tab .count-badge {
+  background: var(--error-bg);
+  color: var(--error);
+}
+.theme-vivid .summary-card {
+  background: #fff8f0;
+  border: 1px solid #ffe0b2;
+  border-radius: 10px;
+}
+.theme-vivid .summary-card .label { color: var(--text-secondary); }
+.theme-vivid .summary-card .value { color: var(--primary-dark); }
+.theme-vivid .summary-card.exception { background: var(--error-bg); border-color: #ef9a9a; }
+.theme-vivid .summary-card.exception .value { color: var(--error); }
+
+.theme-vivid .data-table thead th {
+  background: #fafafa;
+  color: var(--text-secondary);
+  border-bottom: 2px solid var(--primary);
+}
+.theme-vivid .data-table tbody td { border-bottom-color: #f0f0f0; }
+.theme-vivid .data-table tbody tr:hover td { background: #fff8f0; }
+.theme-vivid .status-ok { background: var(--success-bg); color: #00c853; }
+.theme-vivid .status-exception { background: var(--error-bg); color: var(--error); }
+.theme-vivid .exception-detail {
+  background: #fff8f0;
+  border-left: 3px solid var(--accent);
+}
+.theme-vivid .exception-detail .ai-action {
+  background: #fff;
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+.theme-vivid .btn-export {
+  background: #fff;
+  border: 1px solid var(--border);
+  color: var(--text);
+}
+.theme-vivid .btn-export:hover { border-color: var(--primary); color: var(--primary); }
+
+/* ============================================================
+   ANIMATIONS
+   ============================================================ */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+.animate-pulse { animation: pulse 2s ease-in-out infinite; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.theme-content.active {
+  animation: fadeIn 0.35s ease-out;
+}
+
+/* ============================================================
+   RESPONSIVE
+   ============================================================ */
+@media (max-width: 768px) {
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .clean-upload, .dark-upload, .earth-upload, .vivid-upload {
+    flex-direction: column;
+  }
+  .clean-actions, .dark-actions, .earth-actions, .vivid-actions {
+    min-width: auto;
+    flex-direction: row;
+    flex-wrap: wrap;
+  }
+  .data-table { font-size: 0.78rem; }
+  .data-table thead th, .data-table tbody td { padding: 8px 10px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ============================================================
+     THEME SELECTOR HEADER
+     ============================================================ -->
+<div class="selector-header">
+  <div class="selector-title">
+    PowerStation 請求検算AI
+    <span class="badge">DESIGN THEME</span>
+  </div>
+  <div class="theme-tabs">
+    <button class="theme-tab active" data-theme="clean" onclick="switchTheme('clean')"
+      style="--tab-active-bg:#f5f7fa; --tab-active-color:#1565c0;">
+      <span class="dot"></span>Clean Business
+    </button>
+    <button class="theme-tab" data-theme="dark" onclick="switchTheme('dark')"
+      style="--tab-active-bg:#1a1a24; --tab-active-color:#bb86fc;">
+      <span class="dot"></span>Modern Dark
+    </button>
+    <button class="theme-tab" data-theme="earth" onclick="switchTheme('earth')"
+      style="--tab-active-bg:#faf6f1; --tab-active-color:#795548;">
+      <span class="dot"></span>Earth Tone
+    </button>
+    <button class="theme-tab" data-theme="vivid" onclick="switchTheme('vivid')"
+      style="--tab-active-bg:#fafafa; --tab-active-color:#e65100;">
+      <span class="dot"></span>Hi-Contrast
+    </button>
+  </div>
+</div>
+
+<!-- ============================================================
+     THEME 1: CLEAN BUSINESS (BLUE)
+     ============================================================ -->
+<div class="theme-content theme-clean active" id="theme-clean">
+  <div class="clean-header">
+    <h1>
+      <span class="icon"><span class="material-icons-outlined" style="color:#fff">bolt</span></span>
+      PowerStation 請求検算AI
+    </h1>
+    <div class="header-actions">
+      <span>demo_user</span>
+    </div>
+  </div>
+  <div class="dashboard">
+    <!-- Upload -->
+    <div class="clean-upload">
+      <div class="clean-dropzone">
+        <span class="material-icons-outlined">cloud_upload</span>
+        <p class="file-name">sample_invoices_90.csv</p>
+        <p>90件 / 12.4 KB</p>
+      </div>
+      <div class="clean-actions">
+        <button class="btn-clean-primary">
+          <span class="material-icons-outlined" style="font-size:18px">play_arrow</span>
+          検算開始
+        </button>
+        <button class="btn-clean-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">download</span>
+          サンプルCSV (90件)
+        </button>
+        <button class="btn-clean-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">refresh</span>
+          リセット
+        </button>
+      </div>
+    </div>
+    <!-- Rules -->
+    <details class="clean-rules" open>
+      <summary>
+        <span class="material-icons-outlined" style="font-size:18px">settings</span>
+        処理ルール
+      </summary>
+      <div class="rules-content">
+        <span class="rule-chip"><span class="material-icons-outlined">percent</span>税率 10% 固定</span>
+        <span class="rule-chip"><span class="material-icons-outlined">arrow_downward</span>端数切捨て (floor)</span>
+        <span class="rule-chip"><span class="material-icons-outlined">block</span>差額許容 0円</span>
+        <span class="rule-chip"><span class="material-icons-outlined">low_priority</span>値引き優先: amount > rate</span>
+        <span class="rule-chip"><span class="material-icons-outlined">fingerprint</span>冪等: hash+invoice UNIQUE</span>
+      </div>
+    </details>
+    <!-- Progress -->
+    <div class="clean-progress">
+      <div class="progress-header">
+        <h3>
+          <span class="material-icons-outlined" style="font-size:20px">trending_up</span>
+          リアルタイム進捗
+        </h3>
+        <span class="count">67 / 90</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:74%"></div>
+      </div>
+      <div class="branch-status">
+        <span class="branch-chip done">A営業所 30件完了</span>
+        <span class="branch-chip done">B営業所 30件完了</span>
+        <span class="branch-chip processing animate-pulse">C営業所 処理中... 7/30</span>
+      </div>
+    </div>
+    <!-- Result Tabs -->
+    <div class="clean-tabs-container">
+      <div class="result-tabs">
+        <button class="result-tab active" onclick="switchResultTab(this, 'clean')">
+          <span class="material-icons-outlined" style="font-size:18px">dashboard</span>
+          全体サマリ
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'clean')">
+          <span class="material-icons-outlined" style="font-size:18px">business</span>
+          営業所別
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'clean')">
+          <span class="material-icons-outlined" style="font-size:18px">warning_amber</span>
+          例外一覧
+          <span class="count-badge">7</span>
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'clean')">
+          <span class="material-icons-outlined" style="font-size:18px">history</span>
+          監査ログ
+        </button>
+      </div>
+      <!-- Summary Panel -->
+      <div class="result-panel active">
+        <div class="summary-grid">
+          <div class="summary-card">
+            <div class="label">総件数</div>
+            <div class="value">90</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">正常件数</div>
+            <div class="value">83</div>
+          </div>
+          <div class="summary-card exception">
+            <div class="label">例外件数</div>
+            <div class="value">7</div>
+          </div>
+          <div class="summary-card exception">
+            <div class="label">例外率</div>
+            <div class="value">7.8%</div>
+          </div>
+          <div class="summary-card">
+            <div class="label">処理時間</div>
+            <div class="value">12.3<span style="font-size:0.8rem;font-weight:400">秒</span></div>
+          </div>
+        </div>
+      </div>
+      <!-- Branch Panel -->
+      <div class="result-panel">
+        <table class="data-table">
+          <thead>
+            <tr><th>営業所</th><th>件数</th><th>例外</th><th>最多コード</th></tr>
+          </thead>
+          <tbody>
+            <tr><td>A営業所</td><td>30</td><td><span class="status-ok">0</span></td><td>-</td></tr>
+            <tr><td>B営業所</td><td>30</td><td><span class="status-exception">2</span></td><td>DISCOUNT_MISMATCH</td></tr>
+            <tr><td>C営業所</td><td>30</td><td><span class="status-exception">5</span></td><td>TAX_MISMATCH</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <!-- Exception Panel -->
+      <div class="result-panel">
+        <table class="data-table">
+          <thead>
+            <tr><th>請求番号</th><th>営業所</th><th>取引先</th><th>差額</th><th>AI判定理由</th></tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>INV-B-012</td><td>B営業所</td><td>サンプル商事</td>
+              <td class="diff-red">-10</td>
+              <td style="max-width:320px;font-size:0.82rem">値引き率5%適用後の端数処理の差異により10円の差額が発生。</td>
+            </tr>
+            <tr>
+              <td>INV-B-028</td><td>B営業所</td><td>テスト工業</td>
+              <td class="diff-red">+15</td>
+              <td style="max-width:320px;font-size:0.82rem">値引き金額3,000円の適用方法に差異があり合計に15円の乖離。</td>
+            </tr>
+            <tr>
+              <td>INV-C-005</td><td>C営業所</td><td>山田建設</td>
+              <td class="diff-red">-1</td>
+              <td style="max-width:320px;font-size:0.82rem">消費税の端数処理(切捨て vs 四捨五入)により1円の差額。</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="exception-detail" style="margin-top:16px">
+          <div style="font-size:0.76rem;color:var(--primary);font-weight:600;margin-bottom:8px">INV-B-012 内訳</div>
+          <div class="ai-reason">
+            税抜小計120,000円から値引き5,000円を差し引いた115,000円に対し、消費税を切捨て計算すると11,500円になりますが、基幹システムでは11,510円として計算されています。端数処理の方式が異なっている可能性があります。
+          </div>
+          <div class="ai-action">
+            <span style="font-size:0.76rem;font-weight:600;color:var(--primary)">推奨対応:</span>
+            基幹システムの端数処理設定（切捨て/四捨五入/切上げ）を確認し、請求書の税額を修正してください。
+          </div>
+        </div>
+        <button class="btn-export" style="margin-top:16px">
+          <span class="material-icons-outlined" style="font-size:16px">file_download</span>
+          例外CSVエクスポート
+        </button>
+      </div>
+      <!-- Audit Panel -->
+      <div class="result-panel">
+        <table class="data-table">
+          <thead>
+            <tr><th>ハッシュ</th><th>請求番号</th><th>営業所</th><th>ステータス</th><th>差額</th><th>コード</th><th>重複</th><th>承認者</th><th>日時</th></tr>
+          </thead>
+          <tbody>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-A-001</td><td>A営業所</td><td><span class="status-ok">OK</span></td><td>0</td><td>-</td><td>-</td><td>demo_user</td><td>2026-02-28 10:23</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-B-012</td><td>B営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-10</td><td>DISCOUNT_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-C-005</td><td>C営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-1</td><td>TAX_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     THEME 2: MODERN DARK
+     ============================================================ -->
+<div class="theme-content theme-dark" id="theme-dark">
+  <div class="dark-header">
+    <h1>
+      <span class="icon"><span class="material-icons-outlined">bolt</span></span>
+      PowerStation 請求検算AI
+    </h1>
+    <div class="header-actions">
+      <span>demo_user</span>
+    </div>
+  </div>
+  <div class="dashboard">
+    <div class="dark-upload">
+      <div class="dark-dropzone">
+        <span class="material-icons-outlined">cloud_upload</span>
+        <p class="file-name">sample_invoices_90.csv</p>
+        <p>90件 / 12.4 KB</p>
+      </div>
+      <div class="dark-actions">
+        <button class="btn-dark-primary">
+          <span class="material-icons-outlined" style="font-size:18px">play_arrow</span>
+          検算開始
+        </button>
+        <button class="btn-dark-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">download</span>
+          サンプルCSV (90件)
+        </button>
+        <button class="btn-dark-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">refresh</span>
+          リセット
+        </button>
+      </div>
+    </div>
+    <details class="dark-rules" open>
+      <summary>
+        <span class="material-icons-outlined" style="font-size:18px">settings</span>
+        処理ルール
+      </summary>
+      <div class="rules-content">
+        <span class="rule-chip"><span class="material-icons-outlined">percent</span>税率 10% 固定</span>
+        <span class="rule-chip"><span class="material-icons-outlined">arrow_downward</span>端数切捨て (floor)</span>
+        <span class="rule-chip"><span class="material-icons-outlined">block</span>差額許容 0円</span>
+        <span class="rule-chip"><span class="material-icons-outlined">low_priority</span>値引き優先: amount > rate</span>
+        <span class="rule-chip"><span class="material-icons-outlined">fingerprint</span>冪等: hash+invoice UNIQUE</span>
+      </div>
+    </details>
+    <div class="dark-progress">
+      <div class="progress-header">
+        <h3>
+          <span class="material-icons-outlined" style="font-size:20px">trending_up</span>
+          リアルタイム進捗
+        </h3>
+        <span class="count">67 / 90</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:74%"></div>
+      </div>
+      <div class="branch-status">
+        <span class="branch-chip done">A営業所 30件完了</span>
+        <span class="branch-chip done">B営業所 30件完了</span>
+        <span class="branch-chip processing animate-pulse">C営業所 処理中... 7/30</span>
+      </div>
+    </div>
+    <div class="dark-tabs-container">
+      <div class="result-tabs">
+        <button class="result-tab active" onclick="switchResultTab(this, 'dark')">
+          <span class="material-icons-outlined" style="font-size:18px">dashboard</span>
+          全体サマリ
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'dark')">
+          <span class="material-icons-outlined" style="font-size:18px">business</span>
+          営業所別
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'dark')">
+          <span class="material-icons-outlined" style="font-size:18px">warning_amber</span>
+          例外一覧
+          <span class="count-badge">7</span>
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'dark')">
+          <span class="material-icons-outlined" style="font-size:18px">history</span>
+          監査ログ
+        </button>
+      </div>
+      <div class="result-panel active">
+        <div class="summary-grid">
+          <div class="summary-card"><div class="label">総件数</div><div class="value">90</div></div>
+          <div class="summary-card"><div class="label">正常件数</div><div class="value">83</div></div>
+          <div class="summary-card exception"><div class="label">例外件数</div><div class="value">7</div></div>
+          <div class="summary-card exception"><div class="label">例外率</div><div class="value">7.8%</div></div>
+          <div class="summary-card"><div class="label">処理時間</div><div class="value">12.3<span style="font-size:0.8rem;font-weight:400">秒</span></div></div>
+        </div>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>営業所</th><th>件数</th><th>例外</th><th>最多コード</th></tr></thead>
+          <tbody>
+            <tr><td>A営業所</td><td>30</td><td><span class="status-ok">0</span></td><td>-</td></tr>
+            <tr><td>B営業所</td><td>30</td><td><span class="status-exception">2</span></td><td>DISCOUNT_MISMATCH</td></tr>
+            <tr><td>C営業所</td><td>30</td><td><span class="status-exception">5</span></td><td>TAX_MISMATCH</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>請求番号</th><th>営業所</th><th>取引先</th><th>差額</th><th>AI判定理由</th></tr></thead>
+          <tbody>
+            <tr><td>INV-B-012</td><td>B営業所</td><td>サンプル商事</td><td class="diff-red">-10</td><td style="max-width:320px;font-size:0.82rem">値引き率5%適用後の端数処理の差異により10円の差額が発生。</td></tr>
+            <tr><td>INV-B-028</td><td>B営業所</td><td>テスト工業</td><td class="diff-red">+15</td><td style="max-width:320px;font-size:0.82rem">値引き金額3,000円の適用方法に差異があり合計に15円の乖離。</td></tr>
+            <tr><td>INV-C-005</td><td>C営業所</td><td>山田建設</td><td class="diff-red">-1</td><td style="max-width:320px;font-size:0.82rem">消費税の端数処理(切捨て vs 四捨五入)により1円の差額。</td></tr>
+          </tbody>
+        </table>
+        <div class="exception-detail" style="margin-top:16px">
+          <div style="font-size:0.76rem;color:var(--primary);font-weight:600;margin-bottom:8px">INV-B-012 内訳</div>
+          <div class="ai-reason">税抜小計120,000円から値引き5,000円を差し引いた115,000円に対し、消費税を切捨て計算すると11,500円になりますが、基幹システムでは11,510円として計算されています。端数処理の方式が異なっている可能性があります。</div>
+          <div class="ai-action"><span style="font-size:0.76rem;font-weight:600;color:var(--primary)">推奨対応:</span> 基幹システムの端数処理設定（切捨て/四捨五入/切上げ）を確認し、請求書の税額を修正してください。</div>
+        </div>
+        <button class="btn-export" style="margin-top:16px">
+          <span class="material-icons-outlined" style="font-size:16px">file_download</span>
+          例外CSVエクスポート
+        </button>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>ハッシュ</th><th>請求番号</th><th>営業所</th><th>ステータス</th><th>差額</th><th>コード</th><th>重複</th><th>承認者</th><th>日時</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-A-001</td><td>A営業所</td><td><span class="status-ok">OK</span></td><td>0</td><td>-</td><td>-</td><td>demo_user</td><td>2026-02-28 10:23</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-B-012</td><td>B営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-10</td><td>DISCOUNT_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-C-005</td><td>C営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-1</td><td>TAX_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     THEME 3: EARTH TONE
+     ============================================================ -->
+<div class="theme-content theme-earth" id="theme-earth">
+  <div class="earth-header">
+    <h1>
+      <span class="icon"><span class="material-icons-outlined" style="color:#fff">bolt</span></span>
+      PowerStation 請求検算AI
+    </h1>
+    <div class="header-actions">
+      <span>demo_user</span>
+    </div>
+  </div>
+  <div class="dashboard">
+    <div class="earth-upload">
+      <div class="earth-dropzone">
+        <span class="material-icons-outlined">cloud_upload</span>
+        <p class="file-name">sample_invoices_90.csv</p>
+        <p>90件 / 12.4 KB</p>
+      </div>
+      <div class="earth-actions">
+        <button class="btn-earth-primary">
+          <span class="material-icons-outlined" style="font-size:18px">play_arrow</span>
+          検算開始
+        </button>
+        <button class="btn-earth-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">download</span>
+          サンプルCSV (90件)
+        </button>
+        <button class="btn-earth-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">refresh</span>
+          リセット
+        </button>
+      </div>
+    </div>
+    <details class="earth-rules" open>
+      <summary>
+        <span class="material-icons-outlined" style="font-size:18px">settings</span>
+        処理ルール
+      </summary>
+      <div class="rules-content">
+        <span class="rule-chip"><span class="material-icons-outlined">percent</span>税率 10% 固定</span>
+        <span class="rule-chip"><span class="material-icons-outlined">arrow_downward</span>端数切捨て (floor)</span>
+        <span class="rule-chip"><span class="material-icons-outlined">block</span>差額許容 0円</span>
+        <span class="rule-chip"><span class="material-icons-outlined">low_priority</span>値引き優先: amount > rate</span>
+        <span class="rule-chip"><span class="material-icons-outlined">fingerprint</span>冪等: hash+invoice UNIQUE</span>
+      </div>
+    </details>
+    <div class="earth-progress">
+      <div class="progress-header">
+        <h3>
+          <span class="material-icons-outlined" style="font-size:20px">trending_up</span>
+          リアルタイム進捗
+        </h3>
+        <span class="count">67 / 90</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:74%"></div>
+      </div>
+      <div class="branch-status">
+        <span class="branch-chip done">A営業所 30件完了</span>
+        <span class="branch-chip done">B営業所 30件完了</span>
+        <span class="branch-chip processing animate-pulse">C営業所 処理中... 7/30</span>
+      </div>
+    </div>
+    <div class="earth-tabs-container">
+      <div class="result-tabs">
+        <button class="result-tab active" onclick="switchResultTab(this, 'earth')">
+          <span class="material-icons-outlined" style="font-size:18px">dashboard</span>
+          全体サマリ
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'earth')">
+          <span class="material-icons-outlined" style="font-size:18px">business</span>
+          営業所別
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'earth')">
+          <span class="material-icons-outlined" style="font-size:18px">warning_amber</span>
+          例外一覧
+          <span class="count-badge">7</span>
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'earth')">
+          <span class="material-icons-outlined" style="font-size:18px">history</span>
+          監査ログ
+        </button>
+      </div>
+      <div class="result-panel active">
+        <div class="summary-grid">
+          <div class="summary-card"><div class="label">総件数</div><div class="value">90</div></div>
+          <div class="summary-card"><div class="label">正常件数</div><div class="value">83</div></div>
+          <div class="summary-card exception"><div class="label">例外件数</div><div class="value">7</div></div>
+          <div class="summary-card exception"><div class="label">例外率</div><div class="value">7.8%</div></div>
+          <div class="summary-card"><div class="label">処理時間</div><div class="value">12.3<span style="font-size:0.8rem;font-weight:400">秒</span></div></div>
+        </div>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>営業所</th><th>件数</th><th>例外</th><th>最多コード</th></tr></thead>
+          <tbody>
+            <tr><td>A営業所</td><td>30</td><td><span class="status-ok">0</span></td><td>-</td></tr>
+            <tr><td>B営業所</td><td>30</td><td><span class="status-exception">2</span></td><td>DISCOUNT_MISMATCH</td></tr>
+            <tr><td>C営業所</td><td>30</td><td><span class="status-exception">5</span></td><td>TAX_MISMATCH</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>請求番号</th><th>営業所</th><th>取引先</th><th>差額</th><th>AI判定理由</th></tr></thead>
+          <tbody>
+            <tr><td>INV-B-012</td><td>B営業所</td><td>サンプル商事</td><td class="diff-red">-10</td><td style="max-width:320px;font-size:0.82rem">値引き率5%適用後の端数処理の差異により10円の差額が発生。</td></tr>
+            <tr><td>INV-B-028</td><td>B営業所</td><td>テスト工業</td><td class="diff-red">+15</td><td style="max-width:320px;font-size:0.82rem">値引き金額3,000円の適用方法に差異があり合計に15円の乖離。</td></tr>
+            <tr><td>INV-C-005</td><td>C営業所</td><td>山田建設</td><td class="diff-red">-1</td><td style="max-width:320px;font-size:0.82rem">消費税の端数処理(切捨て vs 四捨五入)により1円の差額。</td></tr>
+          </tbody>
+        </table>
+        <div class="exception-detail" style="margin-top:16px">
+          <div style="font-size:0.76rem;color:var(--accent);font-weight:600;margin-bottom:8px">INV-B-012 内訳</div>
+          <div class="ai-reason">税抜小計120,000円から値引き5,000円を差し引いた115,000円に対し、消費税を切捨て計算すると11,500円になりますが、基幹システムでは11,510円として計算されています。端数処理の方式が異なっている可能性があります。</div>
+          <div class="ai-action"><span style="font-size:0.76rem;font-weight:600;color:var(--accent)">推奨対応:</span> 基幹システムの端数処理設定（切捨て/四捨五入/切上げ）を確認し、請求書の税額を修正してください。</div>
+        </div>
+        <button class="btn-export" style="margin-top:16px">
+          <span class="material-icons-outlined" style="font-size:16px">file_download</span>
+          例外CSVエクスポート
+        </button>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>ハッシュ</th><th>請求番号</th><th>営業所</th><th>ステータス</th><th>差額</th><th>コード</th><th>重複</th><th>承認者</th><th>日時</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-A-001</td><td>A営業所</td><td><span class="status-ok">OK</span></td><td>0</td><td>-</td><td>-</td><td>demo_user</td><td>2026-02-28 10:23</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-B-012</td><td>B営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-10</td><td>DISCOUNT_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-C-005</td><td>C営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-1</td><td>TAX_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     THEME 4: HIGH CONTRAST / VIVID
+     ============================================================ -->
+<div class="theme-content theme-vivid" id="theme-vivid">
+  <div class="vivid-header">
+    <h1>
+      <span class="icon"><span class="material-icons-outlined" style="color:#fff">bolt</span></span>
+      PowerStation 請求検算AI
+    </h1>
+    <div class="header-actions">
+      <span>demo_user</span>
+    </div>
+  </div>
+  <div class="dashboard">
+    <div class="vivid-upload">
+      <div class="vivid-dropzone">
+        <span class="material-icons-outlined">cloud_upload</span>
+        <p class="file-name">sample_invoices_90.csv</p>
+        <p>90件 / 12.4 KB</p>
+      </div>
+      <div class="vivid-actions">
+        <button class="btn-vivid-primary">
+          <span class="material-icons-outlined" style="font-size:18px">play_arrow</span>
+          検算開始
+        </button>
+        <button class="btn-vivid-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">download</span>
+          サンプルCSV (90件)
+        </button>
+        <button class="btn-vivid-secondary">
+          <span class="material-icons-outlined" style="font-size:16px">refresh</span>
+          リセット
+        </button>
+      </div>
+    </div>
+    <details class="vivid-rules" open>
+      <summary>
+        <span class="material-icons-outlined" style="font-size:18px">settings</span>
+        処理ルール
+      </summary>
+      <div class="rules-content">
+        <span class="rule-chip"><span class="material-icons-outlined">percent</span>税率 10% 固定</span>
+        <span class="rule-chip"><span class="material-icons-outlined">arrow_downward</span>端数切捨て (floor)</span>
+        <span class="rule-chip"><span class="material-icons-outlined">block</span>差額許容 0円</span>
+        <span class="rule-chip"><span class="material-icons-outlined">low_priority</span>値引き優先: amount > rate</span>
+        <span class="rule-chip"><span class="material-icons-outlined">fingerprint</span>冪等: hash+invoice UNIQUE</span>
+      </div>
+    </details>
+    <div class="vivid-progress">
+      <div class="progress-header">
+        <h3>
+          <span class="material-icons-outlined" style="font-size:20px">trending_up</span>
+          リアルタイム進捗
+        </h3>
+        <span class="count">67 / 90</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="progress-bar-fill" style="width:74%"></div>
+      </div>
+      <div class="branch-status">
+        <span class="branch-chip done">A営業所 30件完了</span>
+        <span class="branch-chip done">B営業所 30件完了</span>
+        <span class="branch-chip processing animate-pulse">C営業所 処理中... 7/30</span>
+      </div>
+    </div>
+    <div class="vivid-tabs-container">
+      <div class="result-tabs">
+        <button class="result-tab active" onclick="switchResultTab(this, 'vivid')">
+          <span class="material-icons-outlined" style="font-size:18px">dashboard</span>
+          全体サマリ
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'vivid')">
+          <span class="material-icons-outlined" style="font-size:18px">business</span>
+          営業所別
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'vivid')">
+          <span class="material-icons-outlined" style="font-size:18px">warning_amber</span>
+          例外一覧
+          <span class="count-badge">7</span>
+        </button>
+        <button class="result-tab" onclick="switchResultTab(this, 'vivid')">
+          <span class="material-icons-outlined" style="font-size:18px">history</span>
+          監査ログ
+        </button>
+      </div>
+      <div class="result-panel active">
+        <div class="summary-grid">
+          <div class="summary-card"><div class="label">総件数</div><div class="value">90</div></div>
+          <div class="summary-card"><div class="label">正常件数</div><div class="value">83</div></div>
+          <div class="summary-card exception"><div class="label">例外件数</div><div class="value">7</div></div>
+          <div class="summary-card exception"><div class="label">例外率</div><div class="value">7.8%</div></div>
+          <div class="summary-card"><div class="label">処理時間</div><div class="value">12.3<span style="font-size:0.8rem;font-weight:400">秒</span></div></div>
+        </div>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>営業所</th><th>件数</th><th>例外</th><th>最多コード</th></tr></thead>
+          <tbody>
+            <tr><td>A営業所</td><td>30</td><td><span class="status-ok">0</span></td><td>-</td></tr>
+            <tr><td>B営業所</td><td>30</td><td><span class="status-exception">2</span></td><td>DISCOUNT_MISMATCH</td></tr>
+            <tr><td>C営業所</td><td>30</td><td><span class="status-exception">5</span></td><td>TAX_MISMATCH</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>請求番号</th><th>営業所</th><th>取引先</th><th>差額</th><th>AI判定理由</th></tr></thead>
+          <tbody>
+            <tr><td>INV-B-012</td><td>B営業所</td><td>サンプル商事</td><td class="diff-red">-10</td><td style="max-width:320px;font-size:0.82rem">値引き率5%適用後の端数処理の差異により10円の差額が発生。</td></tr>
+            <tr><td>INV-B-028</td><td>B営業所</td><td>テスト工業</td><td class="diff-red">+15</td><td style="max-width:320px;font-size:0.82rem">値引き金額3,000円の適用方法に差異があり合計に15円の乖離。</td></tr>
+            <tr><td>INV-C-005</td><td>C営業所</td><td>山田建設</td><td class="diff-red">-1</td><td style="max-width:320px;font-size:0.82rem">消費税の端数処理(切捨て vs 四捨五入)により1円の差額。</td></tr>
+          </tbody>
+        </table>
+        <div class="exception-detail" style="margin-top:16px">
+          <div style="font-size:0.76rem;color:var(--accent);font-weight:600;margin-bottom:8px">INV-B-012 内訳</div>
+          <div class="ai-reason">税抜小計120,000円から値引き5,000円を差し引いた115,000円に対し、消費税を切捨て計算すると11,500円になりますが、基幹システムでは11,510円として計算されています。端数処理の方式が異なっている可能性があります。</div>
+          <div class="ai-action"><span style="font-size:0.76rem;font-weight:600;color:var(--accent)">推奨対応:</span> 基幹システムの端数処理設定（切捨て/四捨五入/切上げ）を確認し、請求書の税額を修正してください。</div>
+        </div>
+        <button class="btn-export" style="margin-top:16px">
+          <span class="material-icons-outlined" style="font-size:16px">file_download</span>
+          例外CSVエクスポート
+        </button>
+      </div>
+      <div class="result-panel">
+        <table class="data-table">
+          <thead><tr><th>ハッシュ</th><th>請求番号</th><th>営業所</th><th>ステータス</th><th>差額</th><th>コード</th><th>重複</th><th>承認者</th><th>日時</th></tr></thead>
+          <tbody>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-A-001</td><td>A営業所</td><td><span class="status-ok">OK</span></td><td>0</td><td>-</td><td>-</td><td>demo_user</td><td>2026-02-28 10:23</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-B-012</td><td>B営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-10</td><td>DISCOUNT_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+            <tr><td style="font-family:monospace;font-size:0.72rem">a3f8c2...</td><td>INV-C-005</td><td>C営業所</td><td><span class="status-exception">EXCEPTION</span></td><td class="diff-red">-1</td><td>TAX_MISMATCH</td><td>-</td><td>demo_user</td><td>2026-02-28 10:24</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Theme tab switching
+function switchTheme(theme) {
+  // Update tabs
+  document.querySelectorAll('.theme-tab').forEach(t => t.classList.remove('active'));
+  document.querySelector(`.theme-tab[data-theme="${theme}"]`).classList.add('active');
+  // Update content
+  document.querySelectorAll('.theme-content').forEach(c => c.classList.remove('active'));
+  document.getElementById(`theme-${theme}`).classList.add('active');
+}
+
+// Result tab switching (per theme)
+function switchResultTab(btn, theme) {
+  const container = document.getElementById(`theme-${theme}`);
+  const tabs = container.querySelectorAll('.result-tab');
+  const panels = container.querySelectorAll('.result-panel');
+  const index = Array.from(tabs).indexOf(btn);
+
+  tabs.forEach(t => t.classList.remove('active'));
+  panels.forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  panels[index].classList.add('active');
+}
+</script>
+
+</body>
+</html>
