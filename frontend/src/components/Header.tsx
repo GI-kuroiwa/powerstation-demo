@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import AutoAwesomeIcon from '@mui/icons-material/AutoAwesome';
 import PersonOutlineIcon from '@mui/icons-material/PersonOutline';
 import { AiStatusIndicator } from './AiStatusIndicator';
+import { config } from '../config';
 
 export const Header = () => (
   <AppBar
@@ -28,7 +29,7 @@ export const Header = () => (
           WebkitTextFillColor: 'transparent',
         }}
       >
-        PowerStation AI
+        {config.appTitle}
       </Typography>
       <AiStatusIndicator />
       <Box sx={{ flexGrow: 1 }} />
