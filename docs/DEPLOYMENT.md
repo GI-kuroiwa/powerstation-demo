@@ -2,11 +2,12 @@
 
 ## 本番URL
 
-| サービス | URL |
-|---------|-----|
-| フロントエンド | https://powerstation-demo.vercel.app |
-| バックエンドAPI | https://powerstation-demo.onrender.com |
-| データベース | Neon PostgreSQL (us-west-2) |
+| サービス | URL | ブランド |
+|---------|-----|---------|
+| フロントエンド（PS版） | https://powerstation-demo.vercel.app | PowerStation AI |
+| フロントエンド（汎用版） | https://financial-control-ai.vercel.app | 財務統制・経営可視化AIエージェント |
+| バックエンドAPI | https://powerstation-demo.onrender.com | - |
+| データベース | Neon PostgreSQL (us-west-2) | - |
 
 ## インフラ構成
 
@@ -22,7 +23,16 @@
 - **ブランチ**: main
 - **Root Directory**: frontend
 - **Framework**: Vite
-- **環境変数**: VITE_API_BASE_URL
+- **環境変数**: VITE_API_BASE_URL, VITE_APP_TITLE
+
+## フロントエンド汎用版 (Vercel)
+
+- **プロジェクト名**: financial-control-ai
+- **リポジトリ**: GI-kuroiwa/powerstation-demo（PS版と同一）
+- **ブランチ**: main
+- **Root Directory**: frontend
+- **Framework**: Vite
+- **環境変数**: VITE_APP_TITLEは未設定（デフォルト: 財務統制・経営可視化AIエージェント）
 
 ## バックエンド (Render.com)
 
@@ -32,7 +42,7 @@
 - **Root Directory**: backend
 - **Dockerfile**: ./Dockerfile
 - **ヘルスチェック**: /api/health
-- **環境変数**: DATABASE_URL, OPENAI_API_KEY, NODE_ENV, FRONTEND_URL
+- **環境変数**: DATABASE_URL, OPENAI_API_KEY, NODE_ENV, FRONTEND_URL, SLACK_WEBHOOK_URL
 
 ## 注意事項
 
